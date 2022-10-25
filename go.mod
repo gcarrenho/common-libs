@@ -1,4 +1,4 @@
-module github.azc.ext.hp.com/LFP-Tropos/udc-common-libs
+module github.com/gcarrenho/common-libs
 
 go 1.18
 
