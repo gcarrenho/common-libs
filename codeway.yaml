@@ -1,0 +1,54 @@
+# codeway.yaml
+
+resources:
+  repositories:
+    - repository: codeway
+      type: githubenterprise
+      name: codeway/templates
+      endpoint: ghe
+
+name: $(Date:yyyyMMdd)$(Rev:.r)
+
+trigger:
+  branches:
+    include:
+    - main
+
+pr:  
+  branches:
+    include:
+    - main
+
+stages:
+  - template: templates/tropos-golang-service-v2.yaml@codeway
+    parameters:
+      projectName: lftropos
+      serviceName: udc-common-lib # 1
+      anchoreGate: true
+      dockerHubConnection: udc-dockerhub
+
+      dockerRegistryConnection: harbor
+      versionMajorMinor: '0.1'
+
+      buildParams:
+              buildOutput: go/src/udc-common-lib
+              buildLocation: ./src/cmd
+              golangVersion: "1.18"
+
+      unitTestParams:
+        owaspDependencyCheckEnabled: true
+        sonarqubeCredentials: sonar
+        sonarProjectPrefix: $(SonarProjectPrefix)
+        sonarProperties: |
+                  sonar.sources=.
+                  sonar.exclusions=**/*_test.go,**/vendor/**,**/testdata/*,**/mocks/*,**/*main.go, **/repositories/*,**/*_const.go
+                
+      sonatypeParams:
+          username: $(NEXUSIQ_USER)
+          password: $(NEXUSIQ_PASSWORD)
+      
+      dockerfileTestParams:
+        appPingGate: false
+      
+      publishParams:
+        trunkBranch: refs/heads/master # default value
