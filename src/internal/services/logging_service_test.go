@@ -7,8 +7,8 @@ import (
 	"os/exec"
 	"testing"
 
-	"github.azc.ext.hp.com/LFP-Tropos/udc-common-libs/src/internal/models"
-	"github.azc.ext.hp.com/LFP-Tropos/udc-common-libs/src/internal/pkg"
+	"github.com/gcarrenho/common-libs/src/internal/models"
+	"github.com/gcarrenho/common-libs/src/internal/pkg"
 )
 
 func TestPanic(t *testing.T) {

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"io"
 
-	"github.azc.ext.hp.com/LFP-Tropos/udc-common-libs/src/internal/models"
+	"github.com/gcarrenho/common-libs/src/internal/models"
 
 	"github.com/rs/zerolog"
 )
