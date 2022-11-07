@@ -1,4 +1,4 @@
-package services
+package logging
 
 import (
 	"bytes"
@@ -7,8 +7,9 @@ import (
 	"os/exec"
 	"testing"
 
-	"github.com/gcarrenho/common-libs/src/internal/models"
-	"github.com/gcarrenho/common-libs/src/internal/pkg"
+	"github.com/gcarrenho/logging/src/internal/models"
+
+	"github.com/gcarrenho/logging/src/internal/pkg"
 )
 
 func TestPanic(t *testing.T) {

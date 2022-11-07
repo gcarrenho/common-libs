@@ -1,4 +1,4 @@
-module github.com/gcarrenho/common-libs
+module github.com/gcarrenho/logging
 
 go 1.18
 

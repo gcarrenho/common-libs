@@ -1,11 +1,11 @@
 // this package contains the services. it are our entry points to the core and each one of them implements the corresponding port
-package services
+package logging
 
 import (
 	"encoding/json"
 	"io"
 
-	"github.com/gcarrenho/common-libs/src/internal/models"
+	"github.com/gcarrenho/logging/src/internal/models"
 
 	"github.com/rs/zerolog"
 )
