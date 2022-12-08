@@ -3,11 +3,10 @@ package logging
 import (
 	"bytes"
 
+	"github.com/gcarrenho/commond-lib/utils"
 	"os"
 	"os/exec"
 	"testing"
-
-	"github.com/gcarrenho/pkg"
 )
 
 func TestPanic(t *testing.T) {
@@ -24,8 +23,8 @@ func TestPanic(t *testing.T) {
 		{
 			name: "Should get media succesfully",
 			log: &Logging{
-				Index:    pkg.StringToPointer("test" + "-" + os.Getenv("ENVIRONMENT")),
-				LabelApp: pkg.StringToPointer("test"),
+				Index:    utils.StringToPointer("test" + "-" + os.Getenv("ENVIRONMENT")),
+				LabelApp: utils.StringToPointer("test"),
 				Message:  "Test",
 			},
 		},
@@ -53,8 +52,8 @@ func TestDebug(t *testing.T) {
 		{
 			name: "Should log debug",
 			log: &Logging{
-				Index:    pkg.StringToPointer("test" + "-" + os.Getenv("ENVIRONMENT")),
-				LabelApp: pkg.StringToPointer("test"),
+				Index:    utils.StringToPointer("test" + "-" + os.Getenv("ENVIRONMENT")),
+				LabelApp: utils.StringToPointer("test"),
 				Message:  "Test",
 			},
 		},
@@ -84,8 +83,8 @@ func TestFatal(t *testing.T) {
 		{
 			name: "Should log Fatal",
 			log: &Logging{
-				Index:    pkg.StringToPointer("test" + "-" + os.Getenv("ENVIRONMENT")),
-				LabelApp: pkg.StringToPointer("test"),
+				Index:    utils.StringToPointer("test" + "-" + os.Getenv("ENVIRONMENT")),
+				LabelApp: utils.StringToPointer("test"),
 				Message:  "Test",
 			},
 		},
@@ -125,8 +124,8 @@ func TestWarn(t *testing.T) {
 		{
 			name: "Should log Warn",
 			log: &Logging{
-				Index:    pkg.StringToPointer("test" + "-" + os.Getenv("ENVIRONMENT")),
-				LabelApp: pkg.StringToPointer("test"),
+				Index:    utils.StringToPointer("test" + "-" + os.Getenv("ENVIRONMENT")),
+				LabelApp: utils.StringToPointer("test"),
 				Message:  "Test",
 			},
 		},
@@ -155,8 +154,8 @@ func TestInfo(t *testing.T) {
 		{
 			name: "Should log Info",
 			log: &Logging{
-				Index:    pkg.StringToPointer("test" + "-" + os.Getenv("ENVIRONMENT")),
-				LabelApp: pkg.StringToPointer("test"),
+				Index:    utils.StringToPointer("test" + "-" + os.Getenv("ENVIRONMENT")),
+				LabelApp: utils.StringToPointer("test"),
 				Message:  "Test",
 			},
 		},
@@ -184,8 +183,8 @@ func TestError(t *testing.T) {
 		{
 			name: "Should log error",
 			log: &Logging{
-				Index:    pkg.StringToPointer("test" + "-" + os.Getenv("ENVIRONMENT")),
-				LabelApp: pkg.StringToPointer("test"),
+				Index:    utils.StringToPointer("test" + "-" + os.Getenv("ENVIRONMENT")),
+				LabelApp: utils.StringToPointer("test"),
 				Message:  "Test",
 			},
 		},
