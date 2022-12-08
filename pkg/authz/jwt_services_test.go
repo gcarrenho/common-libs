@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gcarrenho/pkg/authz/test"
+	"github.com/gcarrenho/authz/test"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/stretchr/testify/assert"
