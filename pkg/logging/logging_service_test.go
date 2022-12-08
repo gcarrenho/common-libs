@@ -6,6 +6,8 @@ import (
 	"os"
 	"os/exec"
 	"testing"
+
+	"github.com/gcarrenho/pkg"
 )
 
 func TestPanic(t *testing.T) {
