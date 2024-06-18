@@ -2,8 +2,9 @@
 package logging
 
 import (
-	"strconv"
 	"time"
+
+	"github.com/rs/zerolog"
 )
 
 /*
@@ -31,7 +32,7 @@ type Logging struct {
 	Path          *string   `json:"path,omitempty"`
 	StatusCode    *int64    `json:"status_code,omitempty"`
 	RequestID     *string   `json:"request_id,omitempty"`
-	Message       string    `json:"-"`
+	Message       string    `json:"message"`
 	RemoteIP      *string   `json:"remote_ip,omitempty"`
 	ContentType   *string   `json:"content_type,omitempty"`
 	Latency       *string   `json:"latency,omitempty"`
@@ -39,24 +40,59 @@ type Logging struct {
 	Pod           *string   `json:"pod,omitempty"`
 	ClusterName   *string   `json:"cluster_name,omitempty"`
 	ClusterRegion *string   `json:"cluster_region,omitempty"`
-	StartTime     time.Time `json:"-"`
+	StartTime     time.Time `json:"start_time"`
 }
 
-func InitOurLogging(project *string, method *string, uri *string, clientIP *string, contentType *string, labelApp *string) *Logging {
-	return &Logging{
-		Index:       project,
-		HttpMethod:  method,
-		Path:        uri,
-		RemoteIP:    clientIP,
-		ContentType: contentType,
-		LabelApp:    labelApp,
-		StartTime:   time.Now(),
+// MarshalZerologObject implements the zerolog.LogObjectMarshaler interface
+func (l *Logging) MarshalZerologObject(e *zerolog.Event) {
+	if l.Index != nil {
+		e.Str("index", *l.Index)
 	}
+	if l.LabelApp != nil {
+		e.Str("label_app", *l.LabelApp)
+	}
+	if l.HttpMethod != nil {
+		e.Str("http_method", *l.HttpMethod)
+	}
+	if l.Path != nil {
+		e.Str("path", *l.Path)
+	}
+	if l.StatusCode != nil {
+		e.Int64("status_code", *l.StatusCode)
+	}
+	if l.RequestID != nil {
+		e.Str("request_id", *l.RequestID)
+	}
+	if l.RemoteIP != nil {
+		e.Str("remote_ip", *l.RemoteIP)
+	}
+	if l.ContentType != nil {
+		e.Str("content_type", *l.ContentType)
+	}
+	if l.Latency != nil {
+		e.Str("latency", *l.Latency)
+	}
+	if l.ContainerName != nil {
+		e.Str("container_name", *l.ContainerName)
+	}
+	if l.Pod != nil {
+		e.Str("pod", *l.Pod)
+	}
+	if l.ClusterName != nil {
+		e.Str("cluster_name", *l.ClusterName)
+	}
+	if l.ClusterRegion != nil {
+		e.Str("cluster_region", *l.ClusterRegion)
+	}
+	e.Str("message", l.Message)
+	e.Time("start_time", l.StartTime)
+	//e.Msg(l.Message)
 }
 
-func (l *Logging) SetLogging(message string, statusCode *int64) {
-	latency := strconv.FormatInt(time.Since(l.StartTime).Milliseconds(), 10)
-	l.Latency = &latency
-	l.Message = message
-	l.StatusCode = statusCode
+// NewLogging creates a new Logging instance
+func NewLogging(message string) *Logging {
+	return &Logging{
+		Message:   message,
+		StartTime: time.Now(),
+	}
 }
