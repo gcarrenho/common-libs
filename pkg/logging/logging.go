@@ -30,7 +30,7 @@ type Logging struct {
 	LabelApp      *string   `json:"label_app,omitempty"`
 	HttpMethod    *string   `json:"http_method,omitempty"`
 	Path          *string   `json:"path,omitempty"`
-	StatusCode    *int64    `json:"status_code,omitempty"`
+	StatusCode    *int      `json:"status_code,omitempty"`
 	RequestID     *string   `json:"request_id,omitempty"`
 	Message       string    `json:"message"`
 	RemoteIP      *string   `json:"remote_ip,omitempty"`
@@ -58,7 +58,7 @@ func (l *Logging) MarshalZerologObject(e *zerolog.Event) {
 		e.Str("path", *l.Path)
 	}
 	if l.StatusCode != nil {
-		e.Int64("status_code", *l.StatusCode)
+		e.Int("status_code", *l.StatusCode)
 	}
 	if l.RequestID != nil {
 		e.Str("request_id", *l.RequestID)

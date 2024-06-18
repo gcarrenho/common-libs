@@ -16,7 +16,7 @@ func TestMarshalZerologObject(t *testing.T) {
 	labelApp := "test_app"
 	httpMethod := "GET"
 	path := "/test/path"
-	statusCode := int64(200)
+	statusCode := 200
 	requestID := "test_request_id"
 	remoteIP := "127.0.0.1"
 	contentType := "application/json"
