@@ -86,7 +86,6 @@ func (l *Logging) MarshalZerologObject(e *zerolog.Event) {
 	}
 	e.Str("message", l.Message)
 	e.Time("start_time", l.StartTime)
-	//e.Msg(l.Message)
 }
 
 // NewLogging creates a new Logging instance
