@@ -1,4 +1,4 @@
-module github.com/gcarrenho/common-libs/logging
+module github.com/gcarrenho/common-libs/pkg/logging
 
 go 1.22.0
 
