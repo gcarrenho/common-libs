@@ -1,144 +1,107 @@
 package errordetails
 
-/*
 import (
 	"errors"
-	"fmt"
+	"strings"
 	"testing"
+	"time"
 
-	"github.com/huandu/go-assert"
+	"github.com/rs/zerolog"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewErrorDetails(t *testing.T) {
-	baseErr := errors.New("an error occurred")
-	customErr := NewErrorDetails(baseErr)
+	err := errors.New("test error")
+	details := NewErrorDetails(err)
 
-	if customErr.err != baseErr {
-		t.Errorf("expected %v, got %v", baseErr, customErr.err)
-	}
+	// Check basic fields
+	assert.Equal(t, "test error", details.ErrorMessage)
+	assert.Equal(t, "*errors.errorString", details.ErrorType)
+	assert.NotEmpty(t, details.File)
+	assert.NotEmpty(t, details.Function)
+	assert.True(t, details.Line > 0)
+	assert.NotEmpty(t, details.StackTrace)
+	assert.Equal(t, err, details.err)
 
-	/*if customErr.Message == "" {
-		t.Errorf("expected title to be initialized, got empty")
-	}
+	// Check timestamp
+	assert.WithinDuration(t, time.Now(), details.Timestamp, time.Second)
 }
 
 func TestErrorDetails_Str(t *testing.T) {
-	baseErr := errors.New("an error occurred")
-	errorDetails := NewErrorDetails(baseErr)
+	err := errors.New("test error")
+	details := NewErrorDetails(err)
 
-	// Add fields using Str method
-	errorDetails.Str("OrderItemID", "123").
-		Str("PresetID", "preset123").
-		Str("SettingsJSON", `{"key":"value"}`)
+	details.Str("key1", "value1").Str("key2", "value2")
 
-	// Check if the fields were added correctly
-	expectedFields := []field{
-		{key: "OrderItemID", val: "123"},
-		{key: "PresetID", val: "preset123"},
-		{key: "SettingsJSON", val: `{"key":"value"}`},
+	expectedContext := []Field{
+		{Key: "key1", Val: "value1"},
+		{Key: "key2", Val: "value2"},
 	}
 
-	if len(errorDetails.fields) != len(expectedFields) {
-		t.Fatalf("expected %d fields, got %d", len(expectedFields), len(errorDetails.fields))
-	}
-
-	for i, field := range errorDetails.fields {
-		if field.key != expectedFields[i].key || field.val != expectedFields[i].val {
-			t.Errorf("expected field %d to be %v, got %v", i, expectedFields[i], field)
-		}
-	}
+	assert.Equal(t, expectedContext, details.Context)
 }
 
 func TestErrorDetails_Int(t *testing.T) {
-	baseErr := errors.New("an error occurred")
-	errorDetails := NewErrorDetails(baseErr)
+	err := errors.New("test error")
+	details := NewErrorDetails(err)
 
-	// Add integer fields using Int method
-	errorDetails.Int("OrderItemID", 123).
-		Int("ErrorCode", 404)
+	details.Int("key1", 1).Int("key2", 2)
 
-	// Check if the fields were added correctly
-	expectedFields := []field{
-		{key: "OrderItemID", val: "123"},
-		{key: "ErrorCode", val: "404"},
+	expectedContext := []Field{
+		{Key: "key1", Val: "1"},
+		{Key: "key2", Val: "2"},
 	}
 
-	if len(errorDetails.fields) != len(expectedFields) {
-		t.Fatalf("expected %d fields, got %d", len(expectedFields), len(errorDetails.fields))
-	}
-
-	for i, field := range errorDetails.fields {
-		if field.key != expectedFields[i].key || field.val != expectedFields[i].val {
-			t.Errorf("expected field %d to be %v, got %v", i, expectedFields[i], field)
-		}
-	}
+	assert.Equal(t, expectedContext, details.Context)
 }
 
-/*func TestErrorDetails_Error(t *testing.T) {
-	baseErr := errors.New("an error occurred")
-	customErr := NewErrorDetails(baseErr).
-		Str("OrderItemID", "123").
-		Str("PresetID", "preset123").
-		Str("SettingsJSON", `{"key":"value"}`).Msg("message error example")
+func TestErrorDetails_Msg(t *testing.T) {
+	err := errors.New("test error")
+	details := NewErrorDetails(err)
 
-	expectedMessage := "message error example | OrderItemID: 123 | PresetID: preset123 | SettingsJSON: {\"key\":\"value\"} --> an error occurred"
+	details.Msg("new message")
 
-	if customErr.Error() != expectedMessage {
-		t.Errorf("expected %s, got %s", expectedMessage, customErr.Error())
-	}
+	assert.Equal(t, "new message", details.ErrorMessage)
+}
+
+func TestErrorDetails_ToClientError(t *testing.T) {
+	err := errors.New("test error")
+	details := NewErrorDetails(err)
+
+	clientError := details.ToClientError()
+
+	assert.Equal(t, details.ErrorMessage, clientError.Message)
 }
 
 func TestErrorDetails_Error(t *testing.T) {
-	baseErr := errors.New("base error")
-	file := "file.go"
-	line := 42
+	err := errors.New("test error")
+	details := NewErrorDetails(err)
 
-	tests := []struct {
-		name           string
-		errorDetails   *ErrorDetails
-		expectedOutput string
-	}{
-		{
-			name: "Base Error",
-			errorDetails: &ErrorDetails{
-				Message: "An error occurred",
-				fields:  nil,
-				err:     baseErr,
-				file:    file,
-				line:    line,
-			},
-			expectedOutput: fmt.Sprintf("%s:%d: An error occurred --> %s", file, line, baseErr.Error()),
-		},
-		{
-			name: "With Fields",
-			errorDetails: &ErrorDetails{
-				Message: "An error occurred",
-				fields: []field{
-					{key: "OrderNumber", val: "12345"},
-				},
-				err:  baseErr,
-				file: file,
-				line: line,
-			},
-			expectedOutput: fmt.Sprintf("%s:%d: An error occurred | OrderNumber: 12345 --> %s", file, line, baseErr.Error()),
-		},
-		{
-			name: "Without Base Error",
-			errorDetails: &ErrorDetails{
-				Message: "An error occurred",
-				fields:  nil,
-				err:     nil,
-				file:    file,
-				line:    line,
-			},
-			expectedOutput: fmt.Sprintf("%s:%d: An error occurred", file, line),
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.expectedOutput, tt.errorDetails.Error())
-		})
-	}
+	assert.Equal(t, err.Error(), details.Error())
 }
-*/
+
+func TestErrorDetails_Unwrap(t *testing.T) {
+	err := errors.New("test error")
+	details := NewErrorDetails(err)
+
+	assert.Equal(t, err, details.Unwrap())
+}
+
+func TestErrorDetails_MarshalZerologObject(t *testing.T) {
+	err := errors.New("test error")
+	details := NewErrorDetails(err)
+	details.Str("context_key", "context_value")
+
+	output := strings.Builder{}
+	logger := zerolog.New(&output)
+	logger.Error().Object("error_details", details).Msg("")
+
+	logOutput := output.String()
+	assert.Contains(t, logOutput, `"message":"test error"`)
+	assert.Contains(t, logOutput, `"file"`)
+	assert.Contains(t, logOutput, `"method"`)
+	assert.Contains(t, logOutput, `"line"`)
+	assert.Contains(t, logOutput, `"trace"`)
+	assert.Contains(t, logOutput, `"error_type":"*errors.errorString"`)
+	assert.Contains(t, logOutput, `"context_key":"context_value"`)
+}
